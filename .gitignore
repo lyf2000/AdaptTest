@@ -1,7 +1,31 @@
 # Byte-compiled / optimized / DLL files
-__pycache__
+__pycache__	
 *.py[cod]
 *$py.class
+
+*.pyc
+db.sqlite3
+venv/
+
+.idea/
+uploaded_media/
+
+__pycache__
+*.pyc
+*.db
+locale/*/LC_MESSAGES/django.mo
+*/locale/*/LC_MESSAGES/django.mo
+.sass-cache/
+.coverage
+.tox
+djangoproject/static/js/lib/jquery-flot/examples
+djangoproject/static/css/*.map
+djangoproject/static/css/*.css
+djangoproject/static/js/lib/unveil/jquery-1.9.1.min.js
+djangoproject/static/js/lib/unveil/index.html
+djangoproject/static/js/lib/unveil/img
+node_modules/
+
 
 # C extensions
 *.so
