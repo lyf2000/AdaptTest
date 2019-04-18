@@ -3,9 +3,10 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-	path('', views.index, name='index-startpage'),
-	path('signup/', views.sign_up, name='signup-startpage'),
-	path('profile/', views.profile, name='profile-startpage'), 
+	path('', views.login, name='index'),
+	path('signup/', views.sign_up, name='signup'),
+	path('logout/', views.logout, name='logout'),
+	path('profile/', views.profile, name='profile'), 
 	path('create_test1/', views.create_test1, name='test_creation_first-startpage'),
 	path('create_test2/', views.create_test2, name='test_creation_second-startpage'),
 	path('test_created_successfully/', views.test_created_successfully, name='test_created_successfully-startpage'),

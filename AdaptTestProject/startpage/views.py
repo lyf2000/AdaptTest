@@ -1,4 +1,7 @@
 from django.shortcuts import render
+from django.shortcuts import render_to_response, redirect 
+from django.contrib import auth 
+from django.template.context_processors import csrf
 
 #главная страница - вход 
 def index(request):
@@ -10,7 +13,10 @@ def sign_up(request):
 
 #личный кабинет
 def profile(request):
-	return render(request, 'startpage/profile.html')
+	if request.user.is_authenticated:
+		return render(request,'startpage/profile.html')
+	else: 
+		return redirect('/')
 
 #промежуточная страница при создании теста
 def create_test1(request):
@@ -40,3 +46,30 @@ def start_test(request):
 
 def question(request):
 	return render(request, 'startpage/question.html')
+
+def login(request):
+	args = {}
+	args.update(csrf(request))
+	if request.POST:
+		username = request.POST.get('username', '')
+		password = request.POST.get('password', '')
+		user = auth.authenticate(username=username, password=password)
+		if user is not None:
+			auth.login(request, user)
+			return redirect('/profile')
+		else:
+			args['login_error'] = "User is not found"
+			return render_to_response('startpage/index.html', args)
+	else:
+		return render_to_response('startpage/index.html', args)
+
+def logout(request):
+	auth.logout(request)
+	return redirect('/')
+
+
+
+
+
+
+
