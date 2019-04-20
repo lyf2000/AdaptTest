@@ -45,7 +45,7 @@ class MyTest(models.Model):
 	user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='mytest_user')
 
 	def __str__(self):
-		return f'{self.test}, {self.user}, {self.date}1'
+		return f'{self.test}, {self.user}, {self.date}'
 
 
 class QuestionResult(models.Model):
