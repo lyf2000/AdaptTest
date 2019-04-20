@@ -73,3 +73,50 @@ def logout(request):
 
 
 
+
+
+#DAMIR
+
+# Hit 'Start Test'--> make POST[user.id, test.id]
+def startTest(self, user_id, test_id):
+	
+    # Searhing for last user's test  
+	my_last_test = MyTest.objects.all().filter(user.id == user_id && test.id == test_id).filter('-date')[0]
+	# Creating new MyTest
+	mt = MyTest(test=my_last_test, user=user_id)
+	startTestInLvl(my_last_test, 1, mt)
+
+# By defining lvl we're construct list of wrong answers from my_last_test
+def startTestInLvl(self, my_last_test, currett_lvl, mt):
+
+	allQRs = QuestionResult.objects.all().filter(mytest.id == my_last_test.id && question.lvl == lvl)
+
+	question_num_in_lvl = Question.objects.all().filter(lvl == current_lvl)
+	someth = allQRs.filter(question__correct_answer.id != selected_answer.id)[:2 * round(round(question_num_in_lvl / 3) / 3) ]
+	for i in someth
+		wrong_questions.append(someth.question)
+	newquestion = wrong_questions.pop() #last
+	return(request, '.http', newquestion, mt, wrong_questions)
+
+
+# вызвать функцию через другую ф-ию , но только с методом ПОСТ???
+
+
+# Hit 'Next Question'
+def newQuestion(self, wrong_count, correct_count, question, selected_answer, wrong_questions, mt):
+    
+    
+	if selected_answer == question.correct:
+    	correct_count--
+    	if (correct_count == 0):
+    		#lvl up
+    	newquestion = wrong_count.pop()
+    	qr = QR(newQuestion, mt, selected_answer)
+
+    else:
+    	wrong_count--
+    	if (wrong_count == 0):
+    		# end
+    	correct_count += 2
+
+    return (request, wrong_count, correct_count, question, wrong_questions, mt)
