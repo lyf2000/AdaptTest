@@ -15,7 +15,6 @@ def create_test(request):
 	pass
 
 
-
 def my_tests(request):
 	pass
 
