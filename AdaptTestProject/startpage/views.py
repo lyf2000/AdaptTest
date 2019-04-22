@@ -77,46 +77,74 @@ def logout(request):
 
 #DAMIR
 
-# Hit 'Start Test'--> make POST[user.id, test.id]
+# Hit 'Start Test'--> send POST[user.id, test.id]
 def startTest(self, user_id, test_id):
-	
+
     # Searhing for last user's test  
-	my_last_test = MyTest.objects.all().filter(user.id == user_id && test.id == test_id).filter('-date')[0]
+	my_last_test = MyTest.objects.all().filter(user.id == user_id && test.id == test_id).orderby('date')[0]
 	# Creating new MyTest
-	mt = MyTest(test=my_last_test, user=user_id)
-	startTestInLvl(my_last_test, 1, mt)
+	mt = MyTest(test=my_last_test.test, user=user_id)
+	startTestInLvl(my_last_test, 1, mt) # ---> startTestInLvl()
 
 # By defining lvl we're construct list of wrong answers from my_last_test
-def startTestInLvl(self, my_last_test, currett_lvl, mt):
+def startTestInLvl(my_last_test, current_lvl, mt):
+
+	if (current_lvl == 6):
+		#end
+
 
 	allQRs = QuestionResult.objects.all().filter(mytest.id == my_last_test.id && question.lvl == lvl)
 
-	question_num_in_lvl = Question.objects.all().filter(lvl == current_lvl)
-	someth = allQRs.filter(question__correct_answer.id != selected_answer.id)[:2 * round(round(question_num_in_lvl / 3) / 3) ]
-	for i in someth
-		wrong_questions.append(someth.question)
-	newquestion = wrong_questions.pop() #last
-	return(request, '.http', newquestion, mt, wrong_questions)
+	question_num_in_lvl = Question.objects.all().filter(lvl == current_lvl).count()
+	correct_count = round(question_num_in_lvl / 3)
+	wrong_count = round(correct_count / 3)
+
+	someth = allQRs.filter(question__correct_answer.id != selected_answer.id)[:2 * correct_count]
+	wrong_questions = []
+	for i in someth:
+		wrong_questions.append(i.question)	
+
+	someth = QuestionResult.objects.all().orderby('mytest__date').exclude(question__in = wrong_questions)
+	newlist = []
+
+	for i in someth:
+		if (i.question not in newlist):
+			newlist.append(i.question)
+
+	newlist.reverse()
+	newlist = newlist[0 : correct_count - wrong_questions.length + (2 * (wrong_count - 1))]
 
 
-# вызвать функцию через другую ф-ию , но только с методом ПОСТ???
+
+	heh = set(wrong_questions) + set(newlist)
+	
+	newquestion = heh.pop()
+
+	return(request, '.http', newquestion, mt, heh, wrong_count, correct_count)
 
 
 # Hit 'Next Question'
-def newQuestion(self, wrong_count, correct_count, question, selected_answer, wrong_questions, mt):
+def newQuestion(request, wrong_count, correct_count, question, selected_answer, heh, mt):
     
-    
+    qr = QR(Question, mt, selected_answer)
+    qr.save()
+
 	if selected_answer == question.correct:
     	correct_count--
     	if (correct_count == 0):
-    		#lvl up
-    	newquestion = wrong_count.pop()
-    	qr = QR(newQuestion, mt, selected_answer)
-
+    		startTestInLvl(Mytest.objects.all().filter(test = mt.test)[-2], question.lvl+1, mt)#???    	
     else:
     	wrong_count--
     	if (wrong_count == 0):
     		# end
     	correct_count += 2
 
-    return (request, wrong_count, correct_count, question, wrong_questions, mt)
+    newquestion = wrong_count.pop()	
+
+    return (request, wrong_count, correct_count, newquestion, heh, mt)
+
+# end
+def result(request, mt, )
+	#quest+=1
+
+	
