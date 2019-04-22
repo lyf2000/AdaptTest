@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import render_to_response, redirect 
-from django.contrib import auth 
+from django.contrib import auth
+from .models import *
 from django.template.context_processors import csrf
 
 #главная страница - вход 
@@ -80,8 +81,8 @@ def logout(request):
 # Hit 'Start Test'--> send POST[user.id, test.id]
 def startTest(self, user_id, test_id):
 
-    # Searhing for last user's test  
-	my_last_test = MyTest.objects.all().filter(user.id == user_id && test.id == test_id).orderby('date')[0]
+	# Searhing for last user's test
+	my_last_test = MyTest.objects.all().filter(user_id == user_id and test_id == test_id).orderby('date')[0]
 	# Creating new MyTest
 	mt = MyTest(test=my_last_test.test, user=user_id)
 	startTestInLvl(my_last_test, 1, mt) # ---> startTestInLvl()
@@ -90,16 +91,16 @@ def startTest(self, user_id, test_id):
 def startTestInLvl(my_last_test, current_lvl, mt):
 
 	if (current_lvl == 6):
-		#end
+		pass
 
 
-	allQRs = QuestionResult.objects.all().filter(mytest.id == my_last_test.id && question.lvl == lvl)
+	allQRs = QuestionResult.objects.all().filter(mytest_id == my_last_test.id and question.lvl == current_lvl)
 
 	question_num_in_lvl = Question.objects.all().filter(lvl == current_lvl).count()
 	correct_count = round(question_num_in_lvl / 3)
 	wrong_count = round(correct_count / 3)
 
-	someth = allQRs.filter(question__correct_answer.id != selected_answer.id)[:2 * correct_count]
+	someth = allQRs.filter(question__correct_answer.id != selected_answer_id)[:2 * correct_count]
 	wrong_questions = []
 	for i in someth:
 		wrong_questions.append(i.question)	
@@ -126,18 +127,19 @@ def startTestInLvl(my_last_test, current_lvl, mt):
 # Hit 'Next Question'
 def newQuestion(request, wrong_count, correct_count, question, selected_answer, heh, mt):
     
-    qr = QR(Question, mt, selected_answer)
+    qr = QuestionResult(Question, mt, selected_answer)
     qr.save()
 
 	if selected_answer == question.correct:
-    	correct_count--
-    	if (correct_count == 0):
-    		startTestInLvl(Mytest.objects.all().filter(test = mt.test)[-2], question.lvl+1, mt)#???    	
-    else:
-    	wrong_count--
-    	if (wrong_count == 0):
-    		# end
-    	correct_count += 2
+		correct_count = correct_count - 1
+		if (correct_count == 0):
+			startTestInLvl(Mytest.objects.all().filter(test = mt.test)[-2], question.lvl+1, mt)#???
+		# else:
+		wrong_count -= 1
+		if (wrong_count == 0):
+			# end
+			pass
+		correct_count += 2
 
     newquestion = wrong_count.pop()	
 
