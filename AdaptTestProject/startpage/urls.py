@@ -15,7 +15,7 @@ urlpatterns = [
 	path('all_my_attempts/', views.all_my_attempts, name="all_my_attempts-startpage"), 
 	path('test_result/', views.test_result, name="test_result-startpage"),
 	path('succes_signup/', views.account_created_successfully, name="succes_signup"),
-	path('tests/<int:testid>/start_test/', views.start_test_page, name='start-test'),
+	path('tests/<int:testid>/start_test/', views.start_test_page, name='start_test'),
 	path('tests/<int:testid>/question/', views.question1, name='question')
 
 

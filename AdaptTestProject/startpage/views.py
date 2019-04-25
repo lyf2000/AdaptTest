@@ -37,8 +37,7 @@ def my_created_tests(request):
 	return render(request, 'startpage/my_created_tests.html')
 
 def tests_page(request):
-	tests =1212
-	return render(request, 'startpage/tests_page.html', {'tests':tests})
+	return render(request, 'startpage/tests_page.html')
 
 def all_my_attempts(request):
 	return render(request, 'startpage/all_my_attempts.html')
