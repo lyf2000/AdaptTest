@@ -23,7 +23,7 @@ class Question(models.Model):
 	all_answers_num = models.PositiveIntegerField(default=0)
 
 	question_text = models.CharField(max_length=250)
-	correct_answer = models.OneToOneField('Answer', on_delete=models.CASCADE, related_name = 'question_correct_answer', null=True)
+	correct_answer = models.OneToOneField('Answer', on_delete=models.CASCADE, related_name = 'question_correct_answer', null=True, blank=True)
 	test = models.ForeignKey('Test', on_delete=models.CASCADE, related_name = 'question_test')
 	lvl = models.PositiveSmallIntegerField(default=1)
 
@@ -40,7 +40,7 @@ class Answer(models.Model):
 
 
 class MyTest(models.Model):
-	test = models.OneToOneField('Test', on_delete=models.CASCADE, related_name='mytest_test')
+	test = models.ForeignKey('Test', on_delete=models.CASCADE, related_name='mytest_test')
 	date = models.DateTimeField(default = timezone.now)
 	user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='mytest_user')
 
@@ -49,6 +49,9 @@ class MyTest(models.Model):
 
 
 class QuestionResult(models.Model):
-	question = models.OneToOneField('Question', on_delete=models.CASCADE, related_name='question')
+	question = models.ForeignKey('Question', on_delete=models.CASCADE, related_name='question')
 	mytest = models.ForeignKey('Mytest', on_delete=models.CASCADE, related_name='mytest')
 	selected_answer = models.OneToOneField('Answer', on_delete=models.CASCADE, related_name='selected_answer')
+
+	def __str__(self):
+		return f'{self.question}, {self.selected_answer}'

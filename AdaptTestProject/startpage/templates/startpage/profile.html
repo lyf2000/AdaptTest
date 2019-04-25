@@ -30,17 +30,17 @@
 			</div>
 
 			<div class="row-center">
-				<a href="/tests_page">
+				<a href="{% url 'tests' %}">
 					<button type="button" class="btn btn-success btn-lg btn-block">Pass the test</button>
 				</a>
 			</div>
 			<div class="row-center">
-				<a href="/create_test1">
+				<a href="{% url 'create_test1' %}">
 					<button type="button" class="btn btn-success btn-lg btn-block">Create a test</button>
 				</a>
 			</div>
 			<div class="row-center">
-				<a href="#">
+				<a href="{% url 'my_created_tests' %}">
 					<button type="button" class="btn btn-success btn-lg btn-block">My created tests</button>
 				</a>
 			</div>
