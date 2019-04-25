@@ -1,0 +1,27 @@
+{% load static %}
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+		<link rel="stylesheet" type="text/css" href="{% static 'startpage/css/base.css' %}">
+		<link rel="stylesheet" type="text/css" href="{% static 'startpage/css/test_creation.css' %}">
+
+		<title>Test Creation</title>
+	</head>
+
+	<body class="text-center">
+
+		<div class="container">
+			<div class="alert alert-success" role="alert">
+				<h1>
+				    You have successfully registered
+				</h1>
+			</div>
+			<div>
+				<a href="/profile">
+					<button type="button" class="btn btn-primary">Go to profile</button>
+				</a>
+			</div>
+		</div>
+	</body>
+</html>

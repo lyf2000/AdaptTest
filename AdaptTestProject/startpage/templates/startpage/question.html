@@ -11,41 +11,54 @@
 
 	<body >
 		<div class="container">
-			<form>
-				
+			<form method="POST" action="">
+				{% csrf_token %}
+
+
 				<div class="question">
-					<h3>Question №1</h3>
+					<h3>Question №1 {{ count }}</h3>
+                    <h3>{{ question.question_text }}</h3>
+                    {{form}}
+
+
+
+
+					<!--
 					<div class="form-group">
-						<label>//Text вопроса//</label>
+						<label name="text-question">//Text вопроса//</label>
 					</div>
 				  
 				  	<div class="form-check">
-					  <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+					  <input class="form-check-input" type="radio" name="answer_radios" id="exampleRadios1" value="option1" checked>
 					  <label class="form-check-label" for="exampleRadios1">
 					    Default radio
 					  </label>
 					</div>
 
 					<div class="form-check">
-					  <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+					  <input class="form-check-input" type="radio" name="answer_radios" id="exampleRadios2" value="option2">
 					  <label class="form-check-label" for="exampleRadios2">
 					    Second default radio
 					  </label>
 					</div>
 
 					<div class="form-check">
-					  <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+					  <input class="form-check-input" type="radio" name="answer_radios" id="exampleRadios3" value="option1" checked>
 					  <label class="form-check-label" for="exampleRadios1">
 					    Default radio
 					  </label>
 					</div>
 
 					<div class="form-check">
-					  <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+					  <input class="form-check-input" type="radio" name="answer_radios" id="exampleRadios4" value="option2">
 					  <label class="form-check-label" for="exampleRadios2">
 					    Second default radio
 					  </label>
 					</div>
+
+					{% if chosen_answer %}
+					<div class="alert alert-danger" role="alert">{{chosen_answer}}</div>
+					{% endif %}-->
 
 					<div class="form-check">
 					  <input type="submit" class="btn btn-primary" value="Answer">

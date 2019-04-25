@@ -18,31 +18,39 @@
 	  	
 	    <div class="col-md-6 offset-md-3">
 	    	<H1 class="text-center">Please sign up</H1>
-	    	<form method="POST" action="#">
 
+	    	<form method="POST" action="">
+				{%csrf_token %}
 		      <div class="form-group">
 			    <label>Name</label>
-			    <input type="text" name="name" class="form-control" placeholder="Enter name">
+				  {{form.first_name}}
 			  </div>
 
 			  <div class="form-group">
 			    <label>Last name</label>
-			    <input type="text" name="last_name" class="form-control" placeholder="Enter last name">
+
+				  {{form.last_name}}
 			  </div>
 
 			  <div class="form-group">
 			    <label>Email address</label>
-			    <input type="email" name="email" class="form-control"  placeholder="name@example.com">
+				  {{form.email}}
+				  {{form.email.errors}}
+			  </div>
+
+				<div class="form-group">
+			    <label>Username</label>
+				  {{form.username}}
 			  </div>
 			  
 			  <div class="form-group">
 			    <label>Password</label>
-			    <input type="password" name="password" class="form-control" placeholder="Password">
+				  {{form.password1}}
 			  </div>
 
 			  <div class="form-group">
-			    <label>Password</label>
-			    <input type="password" name="password_again" class="form-control" placeholder="Password">
+			    <label>Confirm password</label>
+				  {{form.password2}}
 			  </div>
 			  
 			  <button type="submit" class="btn btn-primary">Create account</button>
