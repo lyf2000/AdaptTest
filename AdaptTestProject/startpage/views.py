@@ -194,26 +194,64 @@ def start_test(userid, testid):
 
 def question1(request, testid):
 
+
 	if request.method == 'GET':
 		global current_lvl
 		current_lvl = 1
 		print("Проверка левел:", current_lvl)
 		user = User.objects.get(username='admin11')
 		start_test(user.id, testid)
-	else:
-		form = QuestionAnswerForm(request.POST)
-		selected_answer = form.clean_data['answer_text']
-		quest = form.question1
-
-		make(quest, selected_answer)
-		#if len(QUESTIONS) == 0:
-
+	print('QUESTIONS', QUESTIONS)
+	args = {}
+	args.update(csrf(request))
 
 	new_question = QUESTIONS.pop()
+	print('Новый вопрос', new_question)
+	# args['form'] = QuestionAnswerForm(question=new_question)
+	form = QuestionAnswerForm()
+	print('Новый вопрос',new_question)
+	form.put_answers(new_question)
+	args['form'] = form
+	args['question'] = new_question
+	print('Новый вопрос', new_question)
+	print('args[question]',args['question'])
 
-	print(new_question)
-	form = QuestionAnswerForm(question = new_question)
-	return render(request, 'startpage/question.html', {'form': form})
+	#form = QuestionAnswerForm(question=new_question)
+
+	if request.method == 'POST':
+		form =  QuestionAnswerForm(request.POST)
+		print('Это форма:', form)
+
+		if form.is_valid:
+			print('Валидна или нет ?', form.is_valid)
+			# selected_answer = request.POST['radios']
+			selected_answer = form.cleaned_data['radios']
+			current_question = form.question1
+			print('CURRENT QUESTION:', current_question.question_text)
+			#make(form.question, selected_answer)
+
+
+		# form = QuestionAnswerForm(data=request.POST, question=new_question)
+		#
+		# print('Форма', form)
+		#
+		#
+		# print('Is VALID?',form.is_valid())
+		# print('form.cleaned_data', form.cleaned_data)
+		# selected_answer = request.POST['radios']
+		# print('selected answer', selected_answer)
+		# # selected_answer = form.cleaned_data.get('radios')
+		# # print('выбранный ответ',selected_answer )
+		# make(new_question, selected_answer)
+
+		# if form.is_valid():
+		# 	selected_answer = form.cleaned_data['radios']
+		# 	print('выбранный ответ',selected_answer )
+		# 	make(new_question, selected_answer)
+
+		#if len(QUESTIONS) == 0:
+
+	return render(request, 'startpage/question.html', args)
 
 
 
@@ -295,15 +333,20 @@ def get_questions_in_lvl():
 
 
 def make(question, selected_answer):
-
+	print('Зашел в make')
+	print('selected_answer:', selected_answer)
 	global correct_count, wrong_count, test_id, MT, current_lvl
-	qr = QuestionResult(question, MT, selected_answer)
+	selected_answer2 = Answer.objects.filter(question_id=question.id)
+	print('Достал selected_answer2 :', selected_answer2)
+	qr = QuestionResult(question, MT, selected_answer2)
+	print('qr: ',qr)
 	qr.save()
+
 	if selected_answer == question.correct_answer:
 		correct_count -= 1
 		if (correct_count == 0):
 			current_lvl += 1
-			get_questions_in_lvl()#???
+			get_questions_in_lvl()
 	else:
 		wrong_count -= 1
 		if (wrong_count == 0):
