@@ -11,9 +11,27 @@
 
 	<body>
 
-		<form>
+		<form method="POST" action="">
+        {% csrf_token %}
 		<h3>Write name of the test and count of question</h3>
-		  <div class="form-group">
+
+            <div class="form-group">
+		        <label for="exampleInputEmail1">Test name</label>
+		        {{ form.test_name }}
+		    </div>
+
+		    <div class="form-group">
+		        <label for="exampleInputPassword1">Count of questions</label>
+		        {{ form.questions_number }}
+		    </div>
+
+            {% if errors %}
+            <div class="alert alert-danger" role="alert">{{errors.questions_number}}</div>
+            {% endif %}
+
+
+            <!--
+            <div class="form-group">
 		    <label for="exampleInputEmail1">Test name</label>
 		    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter test name">
 		  </div>
@@ -21,8 +39,8 @@
 		  <div class="form-group">
 		    <label for="exampleInputPassword1">Count of questions</label>
 		    <input type="number" class="form-control" id="exampleInputPassword1" placeholder="50">
-		  </div>
-		  
+		  </div>-->
+
 		  <input type="submit" class="btn btn-primary" value="Сontinue">
 		</form>
 	</body>

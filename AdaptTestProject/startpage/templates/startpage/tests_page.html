@@ -20,50 +20,23 @@
 		    </tr>
 		  </thead>
 		  <tbody>
+          {% for test in tests %}
 		    <tr>
-		      <th scope="row">1</th>
-		      <td>//here test name//</td>
+		      <th scope="row">{{ forloop.counter }}</th>
+		      <td>{{ test.test_name }}</td>
 		      <td>
-		      	<a href="/all_my_attempts">
+		      	<a href="/tests/{{test.id}}/all_my_attempts/">
 		      		Look 
 		      	</a>
 		      </td>
 		      <td>
-		      	<a href="1/start_test/">
+		      	<a href="{{ test.id }}/start_test/">
 		      		Start test 
 		      	</a>
 		      </td>
 		    </tr>
-		    
-		    <tr>
-		      <th scope="row">2</th>
-		      <td>//here test name//</td>
-		      <td>
-		      	<a href="/all_my_attempts">
-		      		Look 
-		      	</a>
-		      </td>
-		      <td>
-		      	<a href="2/start_test/">
-		      		Start test 
-		      	</a>
-		      </td>
-		    </tr>
+          {% endfor %}
 
-		    <tr>
-		      <th scope="row">3</th>
-		      <td>//here test name//</td>
-		      <td>
-		      	<a href="/all_my_attempts">
-		      		Look 
-		      	</a>
-		      </td>
-		      <td>
-		      	<a href="3/start_test/">
-		      		Start test 
-		      	</a>
-		      </td>
-		    </tr>
 
 
 		  </tbody>

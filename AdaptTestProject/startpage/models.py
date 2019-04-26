@@ -24,7 +24,7 @@ class Question(models.Model):
 
 	question_text = models.CharField(max_length=250)
 	correct_answer = models.OneToOneField('Answer', on_delete=models.CASCADE, related_name = 'question_correct_answer', null=True, blank=True)
-	test = models.ForeignKey('Test', on_delete=models.CASCADE, related_name = 'question_test')
+	test = models.ForeignKey('Test', on_delete=models.CASCADE, related_name = 'questions')
 	lvl = models.PositiveSmallIntegerField(default=1)
 
 	def __str__(self):
