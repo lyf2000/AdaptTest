@@ -181,8 +181,15 @@ def account_created_successfully(request):
 
 
 def start_test_page(request, testid):
-	test = Test.objects.get(id=testid)
-	return render(request, 'startpage/start_test.html', {'test':test})
+    test = Test.objects.get(id=testid)
+    request.session['current_lvl'] = 0
+    request.session['wrong_count'] = 0
+    request.session['correct_count'] = 0
+    request.session['test_id'] = 0
+    request.session['MY_LAST_TEST'] = MyTest()
+    request.session['MT'] = MyTest()
+    request.session['current_question'] = Question()
+    return render(request, 'startpage/start_test.html', {'test':test})
 
 current_lvl = 0
 wrong_count = 0
