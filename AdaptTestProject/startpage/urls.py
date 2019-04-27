@@ -17,7 +17,12 @@ urlpatterns = [
 	path('succes_signup/', views.account_created_successfully, name="succes_signup"),
 	path('tests/<int:testid>/start_test/', views.start_test_page, name='start_test'),
 	path('tests/<int:testid>/question/', views.question1, name='question'),
+
+	# path('new/', views.create),
+	# path('del/', views.delete),
+
 	path('my_created_tests/<int:testid>/questions', views.created_questions, name='created_questions')
+
 
 
 ]

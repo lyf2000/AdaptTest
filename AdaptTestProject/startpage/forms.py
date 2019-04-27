@@ -4,6 +4,9 @@ from .models import *
 from django.contrib.auth.forms import UserCreationForm
 from django.core.validators import validate_email
 from django.forms import ModelForm
+
+from .  import views
+
 from django.core.exceptions import ValidationError
 
 
@@ -42,12 +45,14 @@ class QuestionAnswerForm(forms.Form):
     question1 = Question()
 
     def put_answers (self, question):
+        views.getinfo(f'In put_answers {views.correct_count}, {views.wrong_count}', question)
+
         all_answers = Answer.objects.all().filter(question_id=question.id)
 
         for answer in all_answers:
-            print('answer', answer)
+            # print('answer', answer)
             self.CHOICES.append((answer.answer_text, answer.answer_text))
-        self.question1 = question
+        question1 = question
         self.fields['radios'].choices = self.CHOICES
 
         self.CHOICES.clear()

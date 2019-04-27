@@ -18,7 +18,6 @@ class Test(models.Model):
 
 
 class Question(models.Model):
-	#static
 	correct_answers_num = models.PositiveIntegerField(default=0)
 	all_answers_num = models.PositiveIntegerField(default=0)
 
@@ -49,9 +48,9 @@ class MyTest(models.Model):
 
 
 class QuestionResult(models.Model):
-	question = models.ForeignKey('Question', on_delete=models.CASCADE, related_name='question')
-	mytest = models.ForeignKey('Mytest', on_delete=models.CASCADE, related_name='mytest')
-	selected_answer = models.OneToOneField('Answer', on_delete=models.CASCADE, related_name='selected_answer')
+	question = models.ForeignKey('Question', on_delete=models.CASCADE, related_name='question_results')
+	mytest = models.ForeignKey('MyTest', on_delete=models.CASCADE, related_name='mytests')
+	selected_answer = models.ForeignKey('Answer', on_delete=models.CASCADE, related_name='selected_answer')
 
 	def __str__(self):
 		return f'{self.question}, {self.selected_answer}'

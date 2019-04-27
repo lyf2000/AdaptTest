@@ -115,10 +115,10 @@ def main1():
                 break
 
         if lvl == 0:
-            print("Ваш уровень 1")
+            # print("Ваш уровень 1")
             break
         if lvl == 6:
-            print("Ваш уровень 5")
+            # print("Ваш уровень 5")
             break
 
 def main():
