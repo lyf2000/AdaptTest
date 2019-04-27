@@ -90,6 +90,7 @@ def test_created_successfully(request, testid):
 	args['created_questions_number'] = Question.objects.all().filter(test_id=test.id).count()
 	return render(request, 'startpage/test_created_successfully.html', args)
 
+@login_required(login_url='/')
 def my_created_tests(request):
 	user = request.user
 	tests = Test.objects.all().filter(user_creator=user)
@@ -109,6 +110,7 @@ def my_created_tests(request):
 	print('CREATED_questions_number', created_questions_number)
 	return render(request, 'startpage/my_created_tests.html', args)
 
+@login_required(login_url='/')
 def created_questions(request, testid):
 	args = {}
 	args['test'] = Test.objects.get(id=testid)
@@ -116,12 +118,14 @@ def created_questions(request, testid):
 	args['questions'] = question
 	return render(request, 'startpage/created_questions.html', args)
 
+@login_required(login_url='/')
 def tests_page(request):
 	tests = Test.objects.all()
 	content = {}
 	content['tests'] =  tests
 	return render(request, 'startpage/tests_page.html', content)
 
+@login_required(login_url='/')
 def all_my_attempts(request, testid):
 	test = Test.objects.get(id=testid)
 	mytests = MyTest.objects.all().filter(test_id = test.id)
@@ -130,6 +134,7 @@ def all_my_attempts(request, testid):
 	content['mytests'] = mytests
 	return render(request, 'startpage/all_my_attempts.html', content)
 
+@login_required(login_url='/')
 def test_result(request, testid, mytestid):
 
 	mytest = MyTest.objects.get(id=mytestid)
@@ -183,20 +188,37 @@ def question1(request):
 
 
 def login(request):
-	args = {}
-	args.update(csrf(request))
-	if request.POST:
-		username = request.POST.get('username', '')
-		password = request.POST.get('password', '')
-		user = auth.authenticate(username=username, password=password)
-		if user is not None:
-			auth.login(request, user)
-			return redirect('/profile')
-		else:
-			args['login_error'] = "User is not found"
-			return render_to_response('startpage/index.html', args)
+	if request.user.is_authenticated:
+		return render(request,'startpage/profile.html')
 	else:
-		return render_to_response('startpage/index.html', args)
+		args = {}
+		args.update(csrf(request))
+		if request.POST:
+			username = request.POST.get('username', '')
+			password = request.POST.get('password', '')
+			user = auth.authenticate(username=username, password=password)
+			if user is not None:
+				auth.login(request, user)
+				return redirect('/profile')
+			else:
+				args['login_error'] = "User is not found"
+				return render_to_response('startpage/index.html', args)
+		else:
+			return render_to_response('startpage/index.html', args)
+	# args = {}
+	# args.update(csrf(request))
+	# if request.POST:
+	# 	username = request.POST.get('username', '')
+	# 	password = request.POST.get('password', '')
+	# 	user = auth.authenticate(username=username, password=password)
+	# 	if user is not None:
+	# 		auth.login(request, user)
+	# 		return redirect('/profile')
+	# 	else:
+	# 		args['login_error'] = "User is not found"
+	# 		return render_to_response('startpage/index.html', args)
+	# else:
+	# 	return render_to_response('startpage/index.html', args)
 
 def logout(request):
 	auth.logout(request)
@@ -243,8 +265,8 @@ def start_test_page(request, testid):
 	# global MT
 	# MT = MyTest(test=MY_LAST_TEST.test, user=user.id)
 
-
-	return render(request, 'startpage/start_test.html', {'testid':testid})
+	test = Test.objects.get(id=testid)
+	return render(request, 'startpage/start_test.html', {'test':test})
 
 
 def question (request, testid, questionid=12):

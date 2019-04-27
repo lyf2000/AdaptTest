@@ -11,19 +11,18 @@
 
 	<body class="text-center">
 
-	<div class="container">
-       <div class="row padded">
+	<div class="container mt-5">
+
           
-          <div class="col-lg-8 col-md-6 col-sm-12 col-xs-12">
+          <div class="d-flex justify-content-center">
             <div class="card" style="width: 18rem;">
 			  <div class="card-body">
-			    <h5 class="card-title">//here test name//</h5>
-			    <a href="/tests/{{testid}}/question" class="btn btn-primary">Start test</a>
+			    <h5 class="card-title">{{ test.test_name }}</h5>
+			    <a href="/tests/{{test.id}}/question" class="btn btn-primary">Start test</a>
 			  </div>
 			</div>
           </div>
-          
-    </div>                   
+
     
     </div>
 		
