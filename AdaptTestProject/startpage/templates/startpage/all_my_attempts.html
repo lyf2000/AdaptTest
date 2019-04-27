@@ -9,7 +9,7 @@
 	</head>
 
 	<body>
-		<h1>Attempts //name of test here// </h1>
+		<h1>Attempts of "{{ test.test_name }}" </h1>
 		<table class="table table-striped">
 		  <thead>
 		    <tr>
@@ -19,51 +19,24 @@
 		      <th scope="col"></th>
 		    </tr>
 		  </thead>
+            {% for mytest in mytests %}
 		  <tbody>
 		    <tr>
 		      <th scope="row">1</th>
-		      <td>01.04.19</td>
+		      <td>{{ mytest.date }}</td>
 		      <td>
 		      	<a href="">
-		      		12/20 
+		      		doesn't work
 		      	</a>
 		      </td>
 		      <td>
-		      	<a href="">
+		      	<a href="/tests/{{ test.id }}/result/{{ mytest.id }}">
 		      		Look
 		      	</a>
 		      </td>
 		    </tr>
-		    
-		    <tr>
-		      <th scope="row">2</th>
-		      <td>01.04.19</td>
-		      <td>
-		      	<a href="">
-		      		12/20 
-		      	</a>
-		      </td>
-		      <td>
-		      	<a href="">
-		      		Look
-		      	</a>
-		      </td>
-		    </tr>
+		    {% endfor %}
 
-		    <tr>
-		      <th scope="row">3</th>
-		      <td>01.04.19</td>
-		      <td>
-		      	<a href="">
-		      		12/20 
-		      	</a>
-		      </td>
-		      <td>
-		      	<a href="">
-		      		Look
-		      	</a>
-		      </td>
-		    </tr>
 
 
 		  </tbody>

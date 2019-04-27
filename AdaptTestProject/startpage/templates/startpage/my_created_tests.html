@@ -15,42 +15,31 @@
 		    <tr>
 		      <th scope="col">#</th>
 		      <th scope="col">Name of test</th>
-		      <th scope="col">Count of questions</th>
+                <th scope="col">Number of created questions</th>
+		      <th scope="col">Number of questions</th>
 		      <th scope="col"></th>
 		    </tr>
 		  </thead>
 		  <tbody>
+          {% for test in tests %}
 		    <tr>
-		      <th scope="row">1</th>
-		      <td>//here test name//</td>
-		      <td>80</td>
+		      <th scope="row">{{ test.id}}</th>
+		      <td>{{ test.test_name}}</td>
+            <td>
+                {{ test.questions.all.count}}
+
+
+            </td>
+		      <td>{{ test.questions_number}}</td>
 		      <td>
-		      	<a href="">
+		      	<a href="/my_created_tests/{{test.id }}/questions">
 		      		Look 
 		      	</a>
 		      </td>
 		    </tr>
-		    <tr>
-		      <th scope="row">2</th>
-		      <td>//here test name//</td>
-		      <td>80</td>
-		      <td>
-		      	<a href="">
-		      		Look 
-		      	</a>
-		      </td>
-		    </tr>
-		    <tr>
-		      <th scope="row">3</th>
-		      <td>//here test name//</td>
-		      <td>80</td>
-		      <td>
-		      	<a href="">
-		      		Look 
-		      	</a>
-		      </td>
-		    </tr>
+          {% endfor %}
 		  </tbody>
+
 		</table>
 	
 	</body>

@@ -1,0 +1,60 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'startpage/css/base.css' %}">
+
+    <title>Created test</title>
+</head>
+<body class="center">
+
+	<div class="container">
+		<h1>{{ test.test_name }}</h1>
+
+        {% for question in questions %}
+
+		<div class="question">
+			<div class="card mt-5">
+				<div class="card-body">
+					<h3>Question №{{ forloop.counter }}</h3>
+					<div class="elementofquest">
+					  <div>
+					    <h5>Text of question</h5>
+					  </div>
+					  <div>
+					  	<label>{{ question.question_text }}</label>
+					  </div>
+					</div>
+
+                    {% for answer in question.answer_set.all %}
+					<div class="elementofquest">
+					  <div>
+					    <h5>Answer {{forloop.counter}}</h5>
+					  </div>
+					  <div>
+					  	<label>{{answer.answer_text}}</label>
+					  </div>
+					</div>
+                    {% endfor %}
+                    <div class="alert alert-success" role="alert">
+                        <div>
+					    <h5>Right Answer </h5>
+					    </div>
+                       {{ question.correct_answer.answer_text }}
+
+                    </div>
+
+				</div>
+			</div>
+
+		</div>
+        {% endfor %}
+
+
+	</div>
+
+</body>
+</html>

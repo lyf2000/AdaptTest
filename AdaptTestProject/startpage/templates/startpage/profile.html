@@ -12,43 +12,35 @@
 
 		<div class="container">
 			{% if user.is_authenticated %}
-			  <p>Добро пожаловать, {{ user.first_name }}. Спасибо, что не забываете нас.</p>
+			  <p>Welcome, {{ user.first_name }}. Thanks for being with us!</p>
 			{% else %}
 			  <p>Добро пожаловать, незнакомец. Кто вы?</p>
 			{% endif %}
-			<div class="alert alert-primary" role="alert">
-			  Name: {{request.user.first_name}}
-			</div>
-
-			<div class="alert alert-primary" role="alert">
-			  Last Name: {{request.user.last_name}}
-			</div>
 
 
-			<div class="alert alert-primary" role="alert">
-			  e-mail: {{request.user.email}}
-			</div>
-
-			<div class="row-center">
-				<a href="/tests_page">
-					<button type="button" class="btn btn-success btn-lg btn-block">Pass the test</button>
+			<div class="row-center mt-1">
+				<a href="{% url 'tests' %}">
+                    <button type="button" class="btn btn-primary profile-btn" >Pass the test</button>
 				</a>
 			</div>
-			<div class="row-center">
-				<a href="/create_test1">
-					<button type="button" class="btn btn-success btn-lg btn-block">Create a test</button>
+			<div class="row-center mt-1">
+				<a href="{% url 'create_test1' %}">
+                    <button type="button" class="btn btn-primary profile-btn">Create a test</button>
 				</a>
 			</div>
-			<div class="row-center">
-				<a href="#">
-					<button type="button" class="btn btn-success btn-lg btn-block">My created tests</button>
+			<div class="row-center mt-1">
+				<a href="{% url 'my_created_tests' %}">
+                    <button type="button" class="btn btn-primary profile-btn">My created tests</button>
 				</a>
 			</div>
-			<div class="row-center">
+			<div class="row-center mt-1">
 				<a href="{% url 'logout' %}">
-					<button type="button" class="btn btn-success btn-lg btn-block">Log out</button>
+                    <button type="button" class="btn btn-danger profile-btn">Log out</button>
 				</a>
 			</div>
+
+
+
 			
 		</div>	
 	</body>
