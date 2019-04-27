@@ -257,8 +257,13 @@ def start_test(userid, testid):
     # user = request.user
     # my_last_test = MyTest.objects.all().filter(test_id=testid, user_id = user.id).order_by('-date').first()
 
+    getinfo('User', User.objects.get(id=userid))
     global MY_LAST_TEST
     MY_LAST_TEST = MyTest.objects.all().filter(test_id=testid, user_id=userid).order_by('-date').first()
+    # if len(MY_LAST_TEST) == 0:
+    #     MY_LAST_TEST = MyTest(test_id=test_id, user_id=userid)
+    #     MY_LAST_TEST.save()
+    #     q = Question.objects.all().filter(test_id=testid, )
     getinfo("My last test", MY_LAST_TEST.id)
     global MT
     MT = MyTest(test=MY_LAST_TEST.test, user_id=userid)
@@ -287,7 +292,7 @@ def question1(request, testid):
         global current_lvl
         current_lvl = 1
         print('START TEST')
-        user = User.objects.get(username='admin11')
+        user = request.user
         start_test(user.id, testid)
 
     if len(QUESTIONS) == 0:
@@ -333,7 +338,7 @@ def get_questions_in_lvl():
     getinfo('Wrong', False, *wrong_answered_questions)
 
     questions_in_lvl = Question.objects.all().filter(lvl=current_lvl, test_id=MY_LAST_TEST.test.id)
-    # print('questions_in_lvl', questions_in_lvl)
+    getinfo('Questions_in_lvl', None, questions_in_lvl)
     question_num_in_lvl = questions_in_lvl.count()
     # getinfo('Question_num_in_lvl', question_num_in_lvl)
     correct_count = math.ceil(question_num_in_lvl / 3)
@@ -446,11 +451,11 @@ def end_test():
     #     question.all_answers_num += 1
     # \
 
-    global current_lvl
+    global current_lvl, MT
 
     getinfo('TEST IS ENDED', f'LVL = {current_lvl}')
     change_lvl_of_questions()
-    return HttpResponse(f'<h1/>{current_lvl}')
+    return redirect(f'/tests/{MT.test.id}/result/{MT.id}')
 
 
 def change_lvl_of_questions():

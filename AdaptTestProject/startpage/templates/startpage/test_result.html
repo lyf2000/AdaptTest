@@ -49,6 +49,7 @@
                     {% else %}
                     <div class="alert alert-danger" role="alert">
                         <p>Your answer is <strong>{{ qr.selected_answer.answer_text }}</strong></p>
+                         <p>The right answer is <strong>{{ qr.question.correct_answer.answer_text }}</strong></p>
                         You answered wrong. Try one more time :)
 					</div>
                     {% endif %}
@@ -57,10 +58,14 @@
 
 		</div>
         {% endfor %}
+    <div class="container mt-5">
+        <div class="row-center mt-1">
+				<a href="{% url 'profile' %}">
+                    <button type="button" class="btn btn-danger profile-btn">Profile</button>
+				</a>
+			</div>
 
-
-
-
+    </div>
 	</div>
 
 	</body>
