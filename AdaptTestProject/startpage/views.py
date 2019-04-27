@@ -1,27 +1,28 @@
+
 import math
 import operator
 import random
 
+from django.shortcuts import render
+from django.shortcuts import render_to_response, redirect, get_object_or_404
+
 from django.contrib import auth
+from django.http import HttpResponseNotFound
+
 from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.shortcuts import render_to_response, redirect
 from django.template.context_processors import csrf
 
-from .forms import RegistrationForm, QuestionAnswerForm
+from django.contrib.auth.decorators import login_required
+from .forms import *
 from .models import *
 
 
-# главная страница - вход
 def index(request):
     return render(request, 'startpage/index.html')
-
-
-# регистрация
-
-
-# личный кабинет
+  
 def profile(request):
     if request.user.is_authenticated:
         return render(request, 'startpage/profile.html')
@@ -29,88 +30,187 @@ def profile(request):
         return redirect('/')
 
 
-# промежуточная страница при создании теста
+
+#промежуточная страница при создании теста
+@login_required(login_url='/')
 def create_test1(request):
-    return render(request, 'startpage/test_creation_first.html')
+	args = {}
+	args.update(csrf(request))
+	args['form'] = TestCreationForm(instance=request.user)
 
 
-# страница сооздания теста, где будут вноситься вопросы, варианты ответов и правильный ответы
-def create_test2(request):
-    return render(request, 'startpage/test_creation_second.html')
+
+	if request.method == 'POST':
+		form = TestCreationForm(request.POST, instance=request.user)
+		if form.is_valid():
+			form.save(commit=False)
+
+			test = Test()
+			test.test_name = form.cleaned_data['test_name']
+			test.questions_number = form.cleaned_data['questions_number']
+			test.user_creator = request.user
+			test.save()
+			return redirect('/create_test/{0}/question_creation/{1}'.format(test.id, 1))
+		else:
+			args['form'] = form
+			args['errors'] = form.errors
 
 
-def test_created_successfully(request):
-    return render(request, 'startpage/test_created_successfully.html')
+	return render(request,'startpage/test_creation_first.html', args)
 
 
+@login_required(login_url='/')
+def question_creation(request, testid, questioncount):
+	global QUESTIONCOUNTER, QUESTIONCOUNT
+	args = {}
+	args.update(csrf(request))
+	test = Test.objects.get(id=testid)
+	args['form'] = QuestionCreationForm()
+	args['question_count'] = questioncount
+	questions_number = test.questions_number
+	args['questions_number'] = questions_number
+
+	if request.method == 'POST':
+		form = QuestionCreationForm(request.POST, test=test)
+		if form.is_valid():
+			form.save()
+			if questions_number != questioncount:
+				return redirect('/create_test/{0}/question_creation/{1}'.format(testid,questioncount+1))
+			else:
+				return redirect('/create_test/{0}/success/'.format(testid))
+		else:
+			args['form'] = form
+			args['errors'] = form.errors
+
+	return render(request,'startpage/question_creation.html', args)
+
+@login_required(login_url='/')
+def test_created_successfully(request, testid):
+	args = {}
+	test = Test.objects.get(id=testid)
+	args['test_name'] = test.test_name
+	args['questions_number'] = test.questions_number
+	args['created_questions_number'] = Question.objects.all().filter(test_id=test.id).count()
+	return render(request, 'startpage/test_created_successfully.html', args)
+
+
+@login_required(login_url='/')
 def my_created_tests(request):
-    return render(request, 'startpage/my_created_tests.html')
+
+	user = request.user
+	tests = Test.objects.all().filter(user_creator=user)
+	args = {}
+	args['tests'] = tests
+	created_questions_number = {}
+	print('tests ', tests)
+
+	for test in tests:
+		print('TEST', test)
+		created_questions_number['{0}'.format(test_id)] = Question.objects.all().filter(test_id=test.id).count()
+		print('Кол-во вопросов созданных : ', test.questions.all().count())
+		#args['created_questions_number']['{0}'.format(test_id)] =
 
 
+
+	print('CREATED_questions_number', created_questions_number)
+	return render(request, 'startpage/my_created_tests.html', args)
+
+@login_required(login_url='/')
+def created_questions(request, testid):
+	args = {}
+	args['test'] = Test.objects.get(id=testid)
+	question = Question.objects.all().filter(test_id=testid)
+	args['questions'] = question
+	return render(request, 'startpage/created_questions.html', args)
+
+
+@login_required(login_url='/')
 def tests_page(request):
-    return render(request, 'startpage/tests_page.html')
+
+	tests = Test.objects.all()
+	content = {}
+	content['tests'] =  tests
+	return render(request, 'startpage/tests_page.html', content)
+
+@login_required(login_url='/')
+def all_my_attempts(request, testid):
+	test = Test.objects.get(id=testid)
+	mytests = MyTest.objects.all().filter(test_id = test.id)
+	content = {}
+	content['test'] = test
+	content['mytests'] = mytests
+	return render(request, 'startpage/all_my_attempts.html', content)
+
+@login_required(login_url='/')
+def test_result(request, testid, mytestid):
+
+	mytest = MyTest.objects.get(id=mytestid)
+	qrs = QuestionResult.objects.all().filter(mytest_id=mytest.id)
+	print('QRS', qrs)
+	content = {}
+	content['mytest'] = mytest
+	content['qrs'] = qrs
+	for qr in qrs:
+		print('qr.question.answer_set', qr.question)
 
 
-def all_my_attempts(request):
-    return render(request, 'startpage/all_my_attempts.html')
+	# print('My test id', mytest.id)
+	# content['questions'] = mytest.test.questions
+	# print('mytest.test', mytest.test)
+	# print('mytest.test.id', mytest.test.id)
+	# print('mytest.test.questions', mytest.test.questions)
+	# print('content[questions]', content['questions'])
 
 
-def test_result(request):
-    return render(request, 'startpage/test_result.html')
-
-
-def question1(request):
-    args = {}
-    args.update(csrf(request))
-    args['form'] = QuestionAnswerForm()
-
-    if request.method == 'POST':
-        form = QuestionAnswerForm(request.POST)
-        print("Да, это пост!")
-
-        args['errors'] = form.errors
-
-        if form.is_valid():
-            print("Да, валид!")
-            return redirect('/succes_signup')
-    return render(request, 'startpage/question.html', args)
+	return render(request, 'startpage/test_result.html', content)
+	# try:
+	# 	mytest =  MyTest.objects.get(id=mytestid)
+	# 	content = {}
+	# 	content['mytest'] = mytest
+	# 	content['questions'] = mytest.test.questions
+	# 	return render(request, 'startpage/test_result.html', content)
+	# except:
+	# 	print('Нет такого')
+	# 	return HttpResponseNotFound('<h1>Page not found</h1>')
 
 
 def login(request):
-    args = {}
-    args.update(csrf(request))
-    if request.POST:
-        username = request.POST.get('username', '')
-        password = request.POST.get('password', '')
-        user = auth.authenticate(username=username, password=password)
-        if user is not None:
-            auth.login(request, user)
-            return redirect('/profile')
-        else:
-            args['login_error'] = "User is not found"
-            return render_to_response('startpage/index.html', args)
-    else:
-        return render_to_response('startpage/index.html', args)
 
+	if request.user.is_authenticated:
+		return render(request,'startpage/profile.html')
+	else:
+		args = {}
+		args.update(csrf(request))
+		if request.POST:
+			username = request.POST.get('username', '')
+			password = request.POST.get('password', '')
+			user = auth.authenticate(username=username, password=password)
+			if user is not None:
+				auth.login(request, user)
+				return redirect('/profile')
+			else:
+				args['login_error'] = "User is not found"
+				return render_to_response('startpage/index.html', args)
+		else:
+			return render_to_response('startpage/index.html', args)
+	# args = {}
+	# args.update(csrf(request))
+	# if request.POST:
+	# 	username = request.POST.get('username', '')
+	# 	password = request.POST.get('password', '')
+	# 	user = auth.authenticate(username=username, password=password)
+	# 	if user is not None:
+	# 		auth.login(request, user)
+	# 		return redirect('/profile')
+	# 	else:
+	# 		args['login_error'] = "User is not found"
+	# 		return render_to_response('startpage/index.html', args)
+	# else:
+	# 	return render_to_response('startpage/index.html', args)
 
 def logout(request):
     auth.logout(request)
     return redirect('/')
-
-
-def sign_up1(request):
-    args = {}
-    args.update(csrf(request))
-    args['form'] = UserCreationForm()
-    if request.POST:
-        new_user_form = UserCreationForm(request.POST)
-        if new_user_form.is_valid():
-            new_user_form.save()
-            return redirect('/')
-        else:
-            args['form'] = new_user_form
-    return render(request, 'startpage/signup.html', args)
-
 
 def sign_up(request):
     args = {}
@@ -131,56 +231,14 @@ def account_created_successfully(request):
 
 
 def start_test_page(request, testid):
-    # user = request.user
-    # my_last_test = MyTest.objects.all().filter(test_id=testid, user_id = user.id).order_by('-date').first()
-    # user = request.user
-    # global MY_LAST_TEST
-    # MY_LAST_TEST = MyTest.objects.all().filter(test_id=testid, user_id=user.id).order_by('-date').first()
-    # # Creating new MyTest
-    # global MT
-    # MT = MyTest(test=MY_LAST_TEST.test, user=user.id)
 
-    return render(request, 'startpage/start_test.html', {'testid': testid})
+	test = Test.objects.get(id=testid)
+	return render(request, 'startpage/start_test.html', {'test':test})
 
 
-def question(request, testid, questionid=12):
-    global count
-    global lvl
-    global correct_count
-    global wrong_count
-
-    #
-    # Идея! Достаем тут вопросы уровня через метод get_questions_in_lvl
-    # он возвращает вопросы,  correct_count, wrong_count
-    # 42
-    #
-
-    while (True):
-        if (correct_count == 0):
-            break
-        correct_count -= 1
-
-        args = {}
-        args.update(csrf(request))
-        args['form'] = QuestionAnswerForm()
-        args['count'] = correct_count
-        if request.method == 'POST':
-            form = QuestionAnswerForm(request.POST)
-
-            print("Да, это пост!")
-
-            args['errors'] = form.errors
-
-            if form.is_valid():
-                print("Да, валид!")
-        return render(request, 'startpage/question.html', args)
-
-    correct_count = -1
-    count = 0
-    return redirect('/succes_signup')
 
 
-# -------------------------------------------------
+
 current_lvl = 0
 wrong_count = 0
 correct_count = 0
@@ -416,8 +474,7 @@ def change_lvl_of_questions():
             i.lvl = 5
         i.save()
 
-
-# CREATE
+# DO NOT TOUCH!!!!
 # CREATE
 # def create(request):
 #     with open('read.txt', 'r') as f:
@@ -437,13 +494,8 @@ def change_lvl_of_questions():
 #             return HttpResponse('<h1/>Hi')
 
 
-# DO NOT TOUCH!!!!
 
 
-# DO NOT TOUCH!!!
-
-
-# DO NOT TOUCH!!!
 
 def getinfo(text, someth, *args):
     print('------------')
@@ -457,7 +509,7 @@ def getinfo(text, someth, *args):
             print('||||', i)
     print('------------')
 
-
+# DO NOT TOUCH!!!!
 # def delete():
 #     mt = MyTest.objects.all()
 #     for i in mt:

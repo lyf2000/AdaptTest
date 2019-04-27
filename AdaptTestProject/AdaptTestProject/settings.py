@@ -27,6 +27,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+#Ранур добавил
+LOGIN_URL = ''
+LOGOUT_URL = 'logout/'
+
 
 # Application definition
 
