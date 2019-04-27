@@ -283,11 +283,15 @@ def question1(request, testid):
         getinfo('POST', form)
         getinfo('Current question', current_question)
 
-        if form.is_valid:
+
+        if form.is_valid():
+            print('-----CLEANED DATA RADIOS___', form.cleaned_data['radios'])
             selected_answer_text = request.POST['radios']
             result = make(current_question, selected_answer_text)
             if result:
                 return result
+        else:
+            print(str(form.errors))
     else:
         global current_lvl
         current_lvl = 1

@@ -51,7 +51,7 @@ class QuestionAnswerForm(forms.Form):
 
         for answer in all_answers:
             # print('answer', answer)
-            self.CHOICES.append((answer.answer_text, answer.answer_text))
+            self.CHOICES.append((answer.id, answer.answer_text))
         question1 = question
         self.fields['radios'].choices = self.CHOICES
 
