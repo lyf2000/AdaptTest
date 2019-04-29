@@ -246,6 +246,7 @@ def end_test(request):
 
     MT = MyTest.objects.get(id = request.session['MT_ID'])
     current_lvl = request.session['current_lvl']
+    MT.achieved_level = current_lvl
+    MT.save()
     helper.getinfo('TEST IS ENDED', f'LVL = {current_lvl}')
-    helper.change_lvl_of_questions(request)
     return redirect(f'/tests/{MT.test.id}/result/{MT.id}')

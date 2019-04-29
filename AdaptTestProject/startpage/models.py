@@ -42,6 +42,7 @@ class MyTest(models.Model):
 	test = models.ForeignKey('Test', on_delete=models.CASCADE, related_name='mytest_test')
 	date = models.DateTimeField(default = timezone.now)
 	user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='mytest_user')
+	achieved_level = models.IntegerField(default=1)
 
 	def __str__(self):
 		return f'{self.test}, {self.user}, {self.date}'
