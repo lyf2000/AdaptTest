@@ -30,9 +30,8 @@
 		      <th scope="row">{{ forloop.counter }}</th>
 		      <td>{{ mytest.date }}</td>
 		      <td>
-		      	<a href="">
-		      		doesn't work
-		      	</a>
+
+		      	{{ right_answer_count.pop}}/{{ questions_count.pop }}
 		      </td>
 		      <td>
 		      	<a href="/tests/{{ test.id }}/result/{{ mytest.id }}">

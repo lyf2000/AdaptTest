@@ -1,28 +1,16 @@
-import math
-import operator
-import random
-
 from . import helper
-
-from django.shortcuts import render
-from django.shortcuts import render_to_response, redirect, get_object_or_404
-
 from django.contrib import auth
 from django.shortcuts import render, render_to_response, redirect
 from django.urls import reverse, reverse_lazy
 from django.template.context_processors import csrf
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
-
-
 from .forms import *
 from .models import *
 
 
 def index(request):
     return render(request, 'startpage/index.html')
-
-
 
 
 @login_required(login_url=reverse_lazy('index'))
@@ -53,28 +41,28 @@ def create_test1(request):
 
 @login_required(login_url=reverse_lazy('index'))
 def question_creation(request, testid, questioncount):
-	global QUESTIONCOUNTER, QUESTIONCOUNT
-	args = {}
-	args.update(csrf(request))
-	test = Test.objects.get(id=testid)
-	args['form'] = QuestionCreationForm()
-	args['question_count'] = questioncount
-	questions_number = test.questions_number
-	args['questions_number'] = questions_number
+    global QUESTIONCOUNTER, QUESTIONCOUNT
+    args = {}
+    args.update(csrf(request))
+    test = Test.objects.get(id=testid)
+    args['form'] = QuestionCreationForm()
+    args['question_count'] = questioncount
+    questions_number = test.questions_number
+    args['questions_number'] = questions_number
 
-	if request.method == 'POST':
-		form = QuestionCreationForm(request.POST, test=test)
-		if form.is_valid():
-			form.save()
-			if questions_number != questioncount:
-				return HttpResponseRedirect(reverse('question_creation', args=[testid, questioncount+1]))
-			else:
-				return HttpResponseRedirect(reverse('test_created_successfully', args=[testid]))
-		else:
-			args['form'] = form
-			args['errors'] = form.errors
+    if request.method == 'POST':
+        form = QuestionCreationForm(request.POST, test=test)
+        if form.is_valid():
+            form.save()
+            if questions_number != questioncount:
+                return HttpResponseRedirect(reverse('question_creation', args=[testid, questioncount+1]))
+            else:
+                return HttpResponseRedirect(reverse('test_created_successfully', args=[testid]))
+        else:
+            args['form'] = form
+            args['errors'] = form.errors
 
-	return render(request,'startpage/question_creation.html', args)
+    return render(request,'startpage/question_creation.html', args)
 
 @login_required(login_url=reverse_lazy('index'))
 def test_created_successfully(request, testid):
@@ -124,46 +112,59 @@ def tests_page(request):
 
 @login_required(login_url=reverse_lazy('index'))
 def all_my_attempts(request, testid):
-	test = Test.objects.get(id=testid)
-	mytests = MyTest.objects.all().filter(test_id = test.id, user_id=request.user)
-	content = {}
-	content['test'] = test
-	content['mytests'] = mytests
-	return render(request, 'startpage/all_my_attempts.html', content)
+    test = Test.objects.get(id=testid)
+    mytests = MyTest.objects.all().filter(test_id = test.id, user_id=request.user).order_by('-date')
+    right_answer_count = []
+    questions_count = []
+    i = 0
+    for mytest in mytests:
+        qrs = QuestionResult.objects.filter(mytest_id=mytest.id)
+        questions_count.append(qrs.count())
+        right_answer_count.append(0)
+        for qr in qrs:
+            if qr.selected_answer == qr.question.correct_answer:
+                right_answer_count[i]+=1
+        i+=1
+
+    print("RIGHT_ANSWER_COUNT",right_answer_count)
+    content = {}
+    content['test'] = test
+    content['right_answer_count'] = list(reversed(right_answer_count))
+    content['questions_count'] = list(reversed(questions_count))
+    content['mytests'] = mytests
+    return render(request, 'startpage/all_my_attempts.html', content)
 
 
 @login_required(login_url=reverse_lazy('index'))
 def test_result(request, testid, mytestid):
     
-	mytest = MyTest.objects.get(id=mytestid)
-	qrs = QuestionResult.objects.all().filter(mytest_id=mytest.id)
-	print('QRS', qrs)
-	content = {}
-	content['mytest'] = mytest
-	content['qrs'] = qrs
-	for qr in qrs:
-	  print('qr.question.answer_set', qr.question)
+    mytest = MyTest.objects.get(id=mytestid)
+    qrs = QuestionResult.objects.all().filter(mytest_id=mytest.id)
 
-	return render(request, 'startpage/test_result.html', content)
+    content = {}
+    content['mytest'] = mytest
+    content['qrs'] = qrs
+
+    return render(request, 'startpage/test_result.html', content)
 
 def login(request):
-	if request.user.is_authenticated:
-		return render(request,'startpage/profile.html')
-	else:
-		args = {}
-		args.update(csrf(request))
-		if request.POST:
-			username = request.POST.get('username', '')
-			password = request.POST.get('password', '')
-			user = auth.authenticate(username=username, password=password)
-			if user is not None:
-				auth.login(request, user)
-				return HttpResponseRedirect(reverse('profile'))
-			else:
-				args['login_error'] = "User is not found"
-				return render_to_response('startpage/index.html', args)
-		else:
-			return render_to_response('startpage/index.html', args)
+    if request.user.is_authenticated:
+        return render(request,'startpage/profile.html')
+    else:
+        args = {}
+        args.update(csrf(request))
+        if request.POST:
+            username = request.POST.get('username', '')
+            password = request.POST.get('password', '')
+            user = auth.authenticate(username=username, password=password)
+            if user is not None:
+                auth.login(request, user)
+                return HttpResponseRedirect(reverse('profile'))
+            else:
+                args['login_error'] = "User is not found"
+                return render_to_response('startpage/index.html', args)
+        else:
+            return render_to_response('startpage/index.html', args)
 
 
 def logout(request):
@@ -185,14 +186,14 @@ def sign_up(request):
 def account_created_successfully(request):
     return render(request, 'startpage/success_signup.html')
 
-
+@login_required(login_url=reverse_lazy('index'))
 def start_test_page(request, testid):
     test = Test.objects.get(id=testid)
     return render(request, 'startpage/start_test.html', {'test': test})
 
 
 
-
+@login_required(login_url=reverse_lazy('index'))
 def question1(request, testid):
 
     if request.method == 'POST':
@@ -240,7 +241,7 @@ def question1(request, testid):
 
     return render(request, 'startpage/question.html', args)
 
-
+@login_required(login_url=reverse_lazy('index'))
 def end_test(request):
 
     MT = MyTest.objects.get(id = request.session['MT_ID'])
