@@ -13,7 +13,11 @@
 
 	<div class="container">
 		<h1>{{ test.test_name }}</h1>
-
+        <div class="mt-1 ml-1 mb-1">
+            <a href="{% url 'my_created_tests' %}">
+            <button type="button" class="btn btn-primary"> Go to my created tests page</button>
+            </a>
+        </div>
         {% for question in questions %}
 
 		<div class="question">

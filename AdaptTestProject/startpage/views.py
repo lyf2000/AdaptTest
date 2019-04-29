@@ -121,7 +121,7 @@ def tests_page(request):
 @login_required(login_url=reverse_lazy('index'))
 def all_my_attempts(request, testid):
 	test = Test.objects.get(id=testid)
-	mytests = MyTest.objects.all().filter(test_id = test.id)
+	mytests = MyTest.objects.all().filter(test_id = test.id, user_id=request.user)
 	content = {}
 	content['test'] = test
 	content['mytests'] = mytests
@@ -186,9 +186,9 @@ def start_test_page(request, testid):
     request.session['wrong_count'] = 0
     request.session['correct_count'] = 0
     request.session['test_id'] = 0
-    request.session['MY_LAST_TEST'] = MyTest()
-    request.session['MT'] = MyTest()
-    request.session['current_question'] = Question()
+    request.session['MY_LAST_TEST'] = [12,124,343]
+    request.session['MT'] = 12
+    request.session['current_question'] = 12
     return render(request, 'startpage/start_test.html', {'test':test})
 
 current_lvl = 0
@@ -236,9 +236,11 @@ def question1(request, testid):
         getinfo('Current question', current_question)
 
 
-        if form.is_valid():
-            print('-----CLEANED DATA RADIOS___', form.cleaned_data['radios'])
+        if form.is_valid:
+            # print('-----CLEANED DATA RADIOS___', form.cleaned_data['radios'])
             selected_answer_text = request.POST['radios']
+
+            print('SELECTED_ANSWER_TEXT : ',selected_answer_text)
             result = make(current_question, selected_answer_text)
             if result:
                 return result
