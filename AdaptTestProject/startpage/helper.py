@@ -61,8 +61,10 @@ def get_questions_in_lvl(request):
 
     MY_LAST_TEST_ID = request.session['MY_LAST_TEST_ID']
     if MY_LAST_TEST_ID > 0:
+        getinfo('My last test exists!', None)
         allQRs = QuestionResult.objects.all().filter(mytest_id=MY_LAST_TEST_ID, question__lvl=current_lvl)
     else:
+        getinfo('My last test doesnt exist!', None)
         allQRs = []
     getinfo('Get allQRs', None, *allQRs)
 
@@ -72,7 +74,7 @@ def get_questions_in_lvl(request):
         if (qr.selected_answer.id != qr.question.correct_answer.id):
             wrong_answered_questions.append(qr.question)
 
-    getinfo('Wrong', False, *wrong_answered_questions)
+    getinfo('wrong_answered_questions',None, *wrong_answered_questions)
     MT = MyTest.objects.get(id=request.session['MT_ID'])
     getinfo('MT', MT)
     questions_in_lvl = Question.objects.all().filter(lvl=current_lvl,
@@ -82,7 +84,8 @@ def get_questions_in_lvl(request):
     # getinfo('Question_num_in_lvl', question_num_in_lvl)
     all_count = math.ceil(question_num_in_lvl / 3)
     getinfo('All_count', all_count)
-    wrong_answered_questions = wrong_answered_questions[:math.ceil(all_count * 2 / 3)]
+    wrong_answered_questions = wrong_answered_questions[:math.ceil((all_count * 2) / 3)]
+    getinfo('wrong_answered_questions',None, *wrong_answered_questions)
     # getinfo('Wrong_answered_questions', *wrong_answered_questions)
     request.session['wrong_count'] = math.ceil(all_count / 3)
     getinfo('Wrong_count', request.session['wrong_count'])
