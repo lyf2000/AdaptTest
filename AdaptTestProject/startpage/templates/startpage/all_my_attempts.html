@@ -10,6 +10,11 @@
 
 	<body>
 		<h1>Attempts of "{{ test.test_name }}" </h1>
+        <div class="mt-1 ml-1 mb-1">
+            <a href="{% url 'tests' %}">
+            <button type="button" class="btn btn-primary"> Go to tests page</button>
+            </a>
+        </div>
 		<table class="table table-striped">
 		  <thead>
 		    <tr>
@@ -22,7 +27,7 @@
             {% for mytest in mytests %}
 		  <tbody>
 		    <tr>
-		      <th scope="row">1</th>
+		      <th scope="row">{{ forloop.counter }}</th>
 		      <td>{{ mytest.date }}</td>
 		      <td>
 		      	<a href="">

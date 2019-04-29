@@ -4,7 +4,7 @@ from .models import *
 from django.contrib.auth.forms import UserCreationForm
 from django.core.validators import validate_email
 from django.forms import ModelForm
-
+import random
 from .  import views
 
 from django.core.exceptions import ValidationError
@@ -49,6 +49,9 @@ class QuestionAnswerForm(forms.Form):
 
         all_answers = Answer.objects.all().filter(question_id=question_id)
 
+
+        all_answers = all_answers.order_by('?')
+
         for answer in all_answers:
             # print('answer', answer)
             self.CHOICES.append((answer.id, answer.answer_text))
@@ -87,25 +90,9 @@ class QuestionCreationForm(forms.Form):
     def get_test_id(self):
         return self.test
 
-
-
     def __init__(self, *args, **kwargs):
         self.test = kwargs.pop('test', None)
         super(QuestionCreationForm, self).__init__(*args, **kwargs)
-
-
-
-    # @property
-    # def test_id(self):
-    #     return self.test_id
-    #
-    # @test_id.setter
-    # def test_id(self, test_id):
-    #     if test_id != 0:
-    #         self.test_id = test_id
-    #     else:
-    #         print('test_id не должно быть равено 0')
-
 
     def save(self):
         new_question =  Question()
