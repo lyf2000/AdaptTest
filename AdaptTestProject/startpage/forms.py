@@ -44,15 +44,14 @@ class QuestionAnswerForm(forms.Form):
     CHOICES = []
     question1 = Question()
 
-    def put_answers (self, question):
-        views.getinfo(f'In put_answers {views.correct_count}, {views.wrong_count}', question)
+    def put_answers (self, question_id):
+        # views.getinfo(f'In put_answers  {views.wrong_count}', question)
 
-        all_answers = Answer.objects.all().filter(question_id=question.id)
+        all_answers = Answer.objects.all().filter(question_id=question_id)
 
         for answer in all_answers:
             # print('answer', answer)
             self.CHOICES.append((answer.id, answer.answer_text))
-        question1 = question
         self.fields['radios'].choices = self.CHOICES
 
         self.CHOICES.clear()
