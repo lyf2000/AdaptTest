@@ -217,9 +217,12 @@ def question1(request, testid):
     QUESTIONS_ID = request.session['QUESTIONS_ID']
     if len(QUESTIONS_ID) == 0:
         request.session['current_lvl'] += 1
-        helper.get_questions_in_lvl(request)
+        result = helper.get_questions_in_lvl(request)
+        if result:
+            return result
     if request.session['current_lvl'] > 5:
         return end_test(request)
+    QUESTIONS_ID = request.session['QUESTIONS_ID']
     random.shuffle(QUESTIONS_ID)
     helper.getinfo('QUESTIONS_ID', None, *QUESTIONS_ID)
     args = {}

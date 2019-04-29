@@ -57,7 +57,7 @@ def get_questions_in_lvl(request):
     getinfo('In get_questions_in_lvl, LVL is', current_lvl)
 
     if current_lvl > 5:
-        return
+        return views.end_test(request)
 
     MY_LAST_TEST_ID = request.session['MY_LAST_TEST_ID']
     if MY_LAST_TEST_ID > 0:
