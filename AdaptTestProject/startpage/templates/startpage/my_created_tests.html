@@ -28,7 +28,7 @@
 		  <tbody>
           {% for test in tests %}
 		    <tr>
-		      <th scope="row">{{ test.id}}</th>
+		      <th scope="row">{{ forloop.counter}}</th>
 		      <td>{{ test.test_name}}</td>
             <td>
                 {{ test.questions.all.count}}

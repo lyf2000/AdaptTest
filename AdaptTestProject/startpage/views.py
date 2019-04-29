@@ -189,6 +189,7 @@ def account_created_successfully(request):
 @login_required(login_url=reverse_lazy('index'))
 def start_test_page(request, testid):
     test = Test.objects.get(id=testid)
+    request.session['count_of_question'] = 1
     return render(request, 'startpage/start_test.html', {'test': test})
 
 
@@ -237,7 +238,11 @@ def question1(request, testid):
     form = QuestionAnswerForm()
     form.put_answers(new_question_id)
     args['form'] = form
+
+
+    args['count_of_question'] = request.session['count_of_question']
     args['question'] = Question.objects.get(id=new_question_id)
+    request.session['count_of_question'] += 1
 
     return render(request, 'startpage/question.html', args)
 
@@ -249,4 +254,5 @@ def end_test(request):
     MT.achieved_level = current_lvl
     MT.save()
     helper.getinfo('TEST IS ENDED', f'LVL = {current_lvl}')
+    del request.session['count_of_question']
     return redirect(f'/tests/{MT.test.id}/result/{MT.id}')
