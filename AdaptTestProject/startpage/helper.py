@@ -35,9 +35,11 @@ def start_test(request, userid, testid):
 
     # getinfo('User', User.objects.get(id=userid))
 
-    try:
-        MY_LAST_TEST_ID = MyTest.objects.all().filter(test_id=testid, user_id=userid).order_by('-date').first().id
-    except MyTest.DoesNotExist:
+
+    MY_LAST_TEST_ID = MyTest.objects.all().filter(test_id=testid, user_id=userid).order_by('-date')
+    if MY_LAST_TEST_ID:
+        MY_LAST_TEST_ID = MY_LAST_TEST_ID.first().id
+    else:
         MY_LAST_TEST_ID = 0
     request.session['MY_LAST_TEST_ID'] = MY_LAST_TEST_ID
     global MT
